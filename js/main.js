@@ -5,7 +5,7 @@ window.onload = function () {
     /******************获取元素高度函数*****************/
     function scroll() {
         return {
-            top: window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0,
+            top: window.pageYOffset || document.documentElement.offsetHeight || document.body.offsetHeight || 0,
             left: window.pageXOffset || document.documentElement.scrollLeft || document.body.scrollLeft || 0
         };
     }
@@ -33,18 +33,12 @@ window.onload = function () {
 
     var flag;
 
-    var /*topPart = top.offsetHeight,
+    var topPart = top.offsetTop,
         concernPart = concern.offsetTop,
         skillPart = skill.offsetTop,
         experiencePart = experience.offsetTop,
         contactPart = wrapper.offsetHeight,
-        headerPart = 0;*/
-        topPart = top.scrollTop,
-        concernPart = concern.scrollTop,
-        skillPart = skill.scrollTop,
-        experiencePart = experience.scrollTop,
-        contactPart = wrapper.scrollTop,
-        headerPart = 0;
+        headerPart = 0,
         arr = [headerPart, concernPart, skillPart, experiencePart, contactPart];
 
     /**************************画布函数****************/
@@ -99,7 +93,7 @@ window.onload = function () {
             context.arc(c_width / 2, c_height / 2, c_height / 2 - 10, 0, Math.PI * 2, true);
             context.closePath();
             //填充内部颜色
-            context.fillStyle = 'rgba(255, 255, 255, 0.1)';
+            context.fillStyle = '#F8F9FA';
             context.fill();
 
 
@@ -148,30 +142,30 @@ window.onload = function () {
         
         
         /**************************导航固定****************/
-        if (scroll().top >= topPart) {
-            nabItem.className = ' active fixed';
+        if (scroll().top >= top.offsetHeight) {
+            nabItem.className = 'fixed';
             navAbout.style.paddingTop = nabItem.offsetHeight + 'px';
         } else {
             nabItem.className = '';
             navAbout.style.paddingTop = 0;
             /*console.log(arr);*/
         }
-
+        
         /**************************Canvas 区****************/
         flag = true;
         if (scroll().top >= skillPart) {
             if (flag) {
-                circleProgress(80, 50, myCanvas[0]);
-                circleProgress(70, 50, myCanvas[1]);
-                circleProgress(80, 50, myCanvas[2]);
-                circleProgress(80, 50, myCanvas[3]);
-                circleProgress(80, 50, myCanvas[4]);
-                circleProgress(80, 50, myCanvas[5]);
-                circleProgress(80, 50, myCanvas[6]);
-                circleProgress(80, 50, myCanvas[7]);
-                circleProgress(80, 50, myCanvas[8]);
-                circleProgress(80, 50, myCanvas[9]);
-                circleProgress(50, 50, myCanvas[10]);
+                circleProgress(85, 75, myCanvas[0]);
+                circleProgress(85, 75, myCanvas[1]);
+                circleProgress(80, 75, myCanvas[2]);
+                circleProgress(80, 75, myCanvas[3]);
+                circleProgress(80, 75, myCanvas[4]);
+                circleProgress(70, 75, myCanvas[5]);
+                circleProgress(70, 75, myCanvas[6]);
+                circleProgress(75, 75, myCanvas[7]);
+                circleProgress(80, 75, myCanvas[8]);
+                circleProgress(90, 75, myCanvas[9]);
+                circleProgress(85, 75, myCanvas[10]);
                 flag = false;
             }
         } else {
@@ -182,30 +176,47 @@ window.onload = function () {
 
 
         /**************************滚动改变导航栏 区****************/
-        for (var i = 0; i < navItemLen; i++) {
-
-            if (scroll().top >= arr[i]) {
-                for (var j = 0; j < navItemLen; j++) {
-                    navList[j].className = '';
-                    navItem[j].className = '';
-                    /*console.log(navItem[j]);*/
-                }
-                navList[i].className = 'active';
-                navItem[i].className = 'active';
-
-            }
-        }
-    };
+        var Arr = [0, concern.offsetHeight, skill.offsetHeight, experience.offsetHeight, contact.offsetTop];
+         for (var i = 0; i <= navItemLen; i++) {
+             
+             if (scroll().top >= Arr[i]) {
+                 /*console.log(Arr[i] + '--' + scroll().top + "---" );*/
+                 /*console.log(arr);*/
+                 
+                 for (var j = 0; j < navItemLen; j++) {
+                     navList[j].className = '';
+                     navItem[j].className = '';
+                     /*console.log(j);*/
+                    
+                 }
+                 navList[i].className = 'active';
+                 navItem[i].className = 'active';
+             
+             }
+           
+            
+         }
+         
+         if (scroll().top > arr[4]) {
+        navList[0].className = 'active';
+        navItem[0].className = 'active';
+        navList[4].className = '';
+        navItem[4].className = '';
+        nabItem.className = '';
+        navAbout.style.paddingTop = 0;
+    }
+};
     
 
    
         
 
         for (var i = 0; i < navListLen; i++) {
-           /* console.log(navList[i]);*/
+            /* console.log(navList[i]);*/
             navList[i].n = i;
             navItem[i].m = i;
-            navList[i].onclick = function () {
+            navList[i].onclick = function (e) {
+                var e = e || window.event;
                 index = this.n;
                 for (var j = 0; j < navListLen; j++) {
                     navList[j].className = '';
@@ -214,26 +225,31 @@ window.onload = function () {
                 }
                 navList[index].className = 'active';
                 navItem[index].className = 'active';
-               window.scrollTo(0,arr[index]);
+                window.scrollTo(0, arr[index]);
+                e.stopPropagation();
             };
-        
-            navItem[i].onclick = function () {
-                index = this.m;
-                for (var j = 0; j < navItemLen; j++) {
-                    navList[j].className = '';
-                    navItem[j].className = '';
-                    console.log(navList[j]);
-                }
-                navList[index].className = 'active';
-                navItem[index].className = 'active';
-               /* console.log(icon);*/
-                window.scrollTo(0,arr[index]);
-                console.log(arr[index],index);
-            };
+
+            navItem[i].onclick = function (e) {
+                
+            var e = e || window.event;
+            index = this.m;
+            for (var j = 0; j < navItemLen; j++) {
+                navList[j].className = '';
+                navItem[j].className = '';
+                /*console.log(navList[j]);*/
+            }
+            navList[index].className = 'active';
+            navItem[index].className = 'active';
+            /* console.log(icon);*/
+            window.scrollTo(0, arr[index]);
+            /* console.log(arr[index],index);*/
+            e.stopPropagation();
+        }
+            
             
             }
-    
-    
+        
+        
         icon.onclick = function () {
             flag = true;
             if (flag) {
@@ -250,7 +266,7 @@ window.onload = function () {
 
         }
     
-};
 
+}
 
 
